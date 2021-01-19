@@ -1,3 +1,2 @@
-node_modules/
-健康社区nodejs/
-.gitignore/
+node_modules
+健康社区nodejs.code-workspace
