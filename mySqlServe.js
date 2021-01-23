@@ -4,10 +4,10 @@ const json = require("koa-json"); //引入koa-json，只是将数据显示好看
 const bodyParser = require("koa-bodyparser"); //引入post 中间件用来处理post请求
 const router = require("koa-router")(); //路由: ()直接实例化
 const cors = require("koa-cors");
+// const koa2Req = require('koa2-request');
 
 const config = require("./config");
 const mysql = require("./mysql");
-
 const app = new Koa();
 
 app.use(json());
@@ -17,7 +17,8 @@ app.use(router.routes()); //启动路由
 app.use(router.allowedMethods()); //接收get
 
 //启动路由获取
-
+const fontApi = require("./front-end/fontApi");
+fontApi.frontApi(router);
 // 未上报数据获取
 router.get("/pay-info", async (ctx, next) => {
   let data = await mysql.select("pay_info");
@@ -79,10 +80,12 @@ router.get("/post", async (ctx, next) => {
 });
 router.post("/post", async (ctx, next) => {
   let postData = ctx.request.body; // ctx.request.body 调用中间件bodyParser，获取post 提交的数据
+  let { userName } = ctx.request.body;
   ctx.body = {
     code: 1,
     data: postData,
     mesg: "postData",
+    name: userName,
   };
 });
 //默认获取

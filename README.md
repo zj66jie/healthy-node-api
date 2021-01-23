@@ -8,7 +8,9 @@ cnpm install koa-router --save
 cnpm install mysql --save
 cnpm install koa-bodyparser --save
 cnpm install koa-core --save
+cnpm install koa2-request --save
 ```
+
 ### 运行
 修改package.json 中的test值，为"nodemon mySqlServe.js"，其中nodemon为nodemon组件，后面跟上main后的路径文件
 
