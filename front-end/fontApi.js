@@ -9,8 +9,9 @@ class Api {
     });
     // 获取小程序openid
     router.post("/get_openid", async (ctx, next) => {
-      const appId = "wx3b7a888e6739d8ce";
-      const AppSecret = "24de88e7255a895afb34e21ae50168a3";
+      // const appId = "wx3b7a888e6739d8ce";
+      // const AppSecret = "24de88e7255a895afb34e21ae50168a3";
+
       // console.log(ctx.request.body);
       // console.log(ctx.query);
       // console.log(request.query); post不能这样用
