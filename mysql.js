@@ -31,6 +31,7 @@ class Mysql {
       });
     });
   }
+  // 查询整个表
   select(tableName) {
     const sql = `select * from ${tableName}`;
     return new Promise((resolve, reject) => {
@@ -60,8 +61,31 @@ class Mysql {
       });
     });
   }
+  // 删除整个表
   payDelete() {
     this.query("truncate table test");
+  }
+  // 查询根据openid信息
+  allPeopleTest(openid) {
+    const sql = `select * from all_people where openid=${openid}`;
+    return new Promise((resolve, reject) => {
+      pool.getConnection((err, connection) => {
+        if (err) {
+          reject(err);
+          throw error;
+        } else {
+          connection.query(sql, function (error, results, fields) {
+            if (error) {
+              throw error;
+            }
+            if (results) {
+              resolve(results);
+            }
+            connection.release(); //官方写法
+          });
+        }
+      });
+    });
   }
 }
 

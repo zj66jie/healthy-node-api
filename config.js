@@ -3,7 +3,7 @@
 const config = {
   // 启动端口
   port: 3000,
-
+  http: "http://localhost:3000/", //问件服务地址
   // 数据库配置
   database: {
     DATABASE: "healthy", //数据库名字

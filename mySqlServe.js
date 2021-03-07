@@ -4,21 +4,42 @@ const json = require("koa-json"); //引入koa-json，只是将数据显示好看
 const bodyParser = require("koa-bodyparser"); //引入post 中间件用来处理post请求
 const router = require("koa-router")(); //路由: ()直接实例化
 const cors = require("koa-cors");
+const koaBody = require("koa-body");
+//文件系统,已在upload中具体引用
+const path = require("path");
+const KoaStatic = require("koa-static"); //处理静态资源
+// const multer = require("@koa/multer");
+
+const fs = require("fs");
 // const koa2Req = require('koa2-request');
+const logger = require("./utils/log4");
 
 const config = require("./config");
 const mysql = require("./mysql");
 const app = new Koa();
-
-app.use(json());
 app.use(cors());
-app.use(bodyParser()); //引入post 中间件用来处理post请求
+app.use(json());
+//  app.use(koaBody());
+app.use(bodyParser()); //引入post 中间件用来处理post请求，不能喝koa-body共用
+
 app.use(router.routes()); //启动路由
 app.use(router.allowedMethods()); //接收get
+//使用KoaStatic，绑定目录为./public/upload
+// app.use(KoaStatic("./public/upload"));
+app.use(KoaStatic(path.join(__dirname, "./public/upload")));
+// console.log(path.join(__dirname, "public/upload"));
+// app.use(async (ctx, next) => {
+//   ctx.set("Access-Control-Allow-Origin", "*");
+//   await next();
+// });
 
 //启动路由获取
-const fontApi = require("./front-end/fontApi");
-fontApi.frontApi(router);
+const FontApi = require("./front-end/fontApi");
+const BackApi = require("./back-end/backApi");
+
+FontApi.frontApi(router, mysql);
+BackApi.backApi(router, mysql);
+
 // 未上报数据获取
 router.get("/pay-info", async (ctx, next) => {
   let data = await mysql.select("pay_info");
