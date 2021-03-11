@@ -1,7 +1,8 @@
 const multer = require("@koa/multer");
 const path = require("path");
+let getTime = require("../utils/getTime");
 var config = require("../config.js");
-let imgName;
+let imgName = [];
 //文件保存设置
 const storage = multer.diskStorage({
   // destination: function (req, file, cb) {
@@ -14,12 +15,12 @@ const storage = multer.diskStorage({
 
   filename(req, file, cb) {
     // logger.debug(req);
-    console.log(file);
+    console.log(file + Date.now());
     let fileFormat = file.originalname.split("."); //以点分割成数组，数组的最后一项就是后缀名
     //文件名字，时间+原文件名字
     let fileNowName =
       Date.now() + fileFormat[0] + "." + fileFormat[fileFormat.length - 1];
-    imgName = fileNowName;
+    imgName.push(config.http + fileNowName);
     // BackApi.imgName(fileNowName);
     cb(null, fileNowName);
     // let type = file.originalname.split(".")[1];
@@ -86,43 +87,29 @@ class BackApi {
     //上传图片,获取图片名字返回
     router.post("/add", upload.single("file"), async (ctx) => {
       // const { title, img, text } = ctx.request.body;
-      console.log();
-      // 返回结果给前端
-
-      // console.log(imgName + "555");
-      // if (img == "有") {
-      //   if (imgName && title) {
-      //     mysql.query(
-      //       `INSERT INTO news (title,img,text) VALUES ('${title}','${
-      //         config.http + imgName
-      //       }','${text}')`
-      //     );
-      //   }
-      // }
-      // if (img == "无") {
-      //   mysql.query(
-      //     `INSERT INTO news (title,img,text) VALUES ('${title}','无','${text}')`
-      //   );
-      // }
-
+      console.log(imgName);
+      let mesg = "ok";
+      if (imgName.length == 0) {
+        mesg = "off";
+      }
       ctx.body = {
-        mesg: "ok",
+        mesg,
         imgName,
       };
+      imgName = [];
     });
     //新闻存入存入数据库
     router.post("/add-news", async (ctx) => {
       const { title, img, text } = ctx.request.body;
       console.log();
+      const date = getTime.dateNow();
       if (img == "无") {
         mysql.query(
-          `INSERT INTO news (title,img,text) VALUES ('${title}','无','${text}')`
+          `INSERT INTO news (title,img,text,date) VALUES ('${title}','无','${text}','${date}')`
         );
       } else {
         mysql.query(
-          `INSERT INTO news (title,img,text) VALUES ('${title}','${
-            config.http + img
-          }','${text}')`
+          `INSERT INTO news (title,img,text,date) VALUES ('${title}','${img}','${text}','${date}')`
         );
       }
       ctx.body = {
